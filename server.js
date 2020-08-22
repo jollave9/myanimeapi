@@ -121,25 +121,28 @@ app.get('/api/video-src/:name_episode', (req, res) => {
                     dom = new DOMParser().parseFromString(data, 'text/html')
                     const extractSource = string => string.slice(string.indexOf('https'), (string.indexOf('label') - 2))
                     const tempURL = extractSource(dom.getElementsByTagName('script')[3].innerHTML)
-                    const extractBase64URL = tempURL.slice(tempURL.indexOf('url=') + 4)
+                    if (tempURL.search('https://vidstreaming.io/goto.php?') === -1)
+                        res.send(tempURL)
+                    else {
+                        const extractBase64URL = tempURL.slice(tempURL.indexOf('url=') + 4)
 
-                    let temp = ''
-                    keys.map((x, i) => {
-                        if (extractBase64URL.search(keys[i]) !== -1)
-                            temp = extractBase64URL.replace(x, '')
-                    })
-                    let buff = Buffer.from(temp, 'base64');
+                        let temp = ''
+                        keys.map((x, i) => {
+                            if (extractBase64URL.search(keys[i]) !== -1)
+                                temp = extractBase64URL.replace(x, '')
+                        })
+                        let buff = Buffer.from(temp, 'base64');
 
-                    const realSource = buff.toString()
-                    res.send(realSource)
+                        const realSource = buff.toString()
+                        res.send(realSource)
+                    }
+
                 })
                 .catch((e) => console.log(e))
 
         })
         .catch((e) => console.log(e))
 })
-
-
 /*
 routes below could be converted in to this
 but for convention just follow those 
