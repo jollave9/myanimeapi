@@ -121,6 +121,7 @@ app.get('/api/video-src/:name_episode', (req, res) => {
                     dom = new DOMParser().parseFromString(data, 'text/html')
                     const extractSource = string => string.slice(string.indexOf('https'), (string.indexOf('label') - 2))
                     const tempURL = extractSource(dom.getElementsByTagName('script')[3].innerHTML)
+
                     if (tempURL.search('goto.php?') === -1)
                         res.send(tempURL)
                     else {
